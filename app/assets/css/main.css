@@ -1,0 +1,164 @@
+/* ============================================================
+   main.css — سیستم طراحی پروژه (Tailwind CSS v4 — CSS-First)
+   ------------------------------------------------------------
+   پالت تیره «آبی اقیانوسی» (پیش‌فرض — انتخاب کاربر):
+     پس‌زمینه #0B1120 · سطح #162136 · اصلی #3B82F6 · متن #F1F5F9
+   پالت روشن (تایید کاربر — رنگ برند یکپارچه با تم تیره):
+     پس‌زمینه #FAFAFC · سطح #FFFFFF · متن #1E1B2E · اصلی #2563EB
+   ------------------------------------------------------------
+   منطق طراحی: فقط ۴ رنگ پایه برای هر تم.
+   رنگ‌های کمکی (muted برای متن خنثی، border برای خطوط) با
+   color-mix از ترکیب «متن + پس‌زمینه» ساخته می‌شوند — یعنی
+   هم پالت محدود و تمیز می‌ماند، هم اگر یک رنگ پایه را عوض
+   کنیم همه رنگ‌های مشتق خودکار هماهنگ می‌شوند.
+   ============================================================ */
+
+@import "tailwindcss";
+
+/* حالت تیره بر اساس «کلاس» باشد نه تنظیمات سیستم مرورگر؛
+   چون سوییچ تم را خودمان با color-mode کنترل می‌کنیم */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─────────── توکن‌های معنایی: حالت روشن (ریشه) ─────────── */
+:root,
+.light {
+  --background: #FAFAFC;   /* پس‌زمینه کل صفحه */
+  --surface: #FFFFFF;      /* سطح کارت‌ها و پنل‌ها */
+  --foreground: #1E1B2E;   /* متن اصلی */
+  --primary: #2563EB;      /* رنگ برند/اکشن — آبی یکپارچه در هر دو تم (انتخاب کاربر) */
+  --primary-foreground: #FFFFFF; /* متنی که روی رنگ اصلی می‌نشیند */
+
+  /* متن خنثی: ۶۲٪ رنگ متن + ۳۸٪ پس‌زمینه */
+  --muted: color-mix(in oklab, var(--foreground) 62%, var(--background));
+  /* خطوط جداکننده: ۱۲٪ متن روی پس‌زمینه — ظریف و هماهنگ */
+  --border: color-mix(in oklab, var(--foreground) 12%, var(--background));
+
+  color-scheme: light;
+}
+
+/* ─────────── توکن‌های معنایی: حالت تیره «آبی اقیانوسی» ─────────── */
+.dark {
+  --background: #0B1120;
+  --surface: #162136;
+  --foreground: #F1F5F9;
+  --primary: #3B82F6;
+  --primary-foreground: #FFFFFF;
+
+  --muted: color-mix(in oklab, var(--foreground) 62%, var(--background));
+  --border: color-mix(in oklab, var(--foreground) 12%, var(--background));
+
+  color-scheme: dark;
+}
+
+/* ─────────── نگاشت توکن‌ها به یوتیلیتی‌های Tailwind ───────────
+   @theme inline یعنی مقدار var(...) عیناً داخل کلاس‌ها می‌نشیند
+   (مثلاً bg-background → background-color: var(--background))
+   نتیجه: با عوض شدن کلاس <html> بین dark/light، تمام رنگ‌های
+   سایت به‌صورت زنده و بدون رفرش عوض می‌شوند. */
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* فونت پیش‌فرض سایت: وزیرمتن (کلاس font-sans و کل بدنه) */
+  --font-sans: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
+}
+
+/* ─────────── لایه پایه ─────────── */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    scroll-behavior: smooth; /* اسکرول نرم برای لینک‌های داخلی */
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* ============================================================
+   دیزاین‌سیستم — کلاس‌های از پیش نوشته
+   ------------------------------------------------------------
+   منطق: هر کامپوننت به‌جای تکرار ده‌ها یوتیلیتی، فقط از این
+   کلاس‌ها استفاده می‌کند؛ نتیجه: یکدستی کامل + تغییر سراسری
+   راحت (مثلاً اگر گردی دکمه‌ها را عوض کنیم، همه‌جا عوض می‌شود).
+   ترکیب‌پذیرند: «btn btn-primary btn-lg»
+   ============================================================ */
+@layer components {
+  /* ── چیدمان: کانتینر مرکزی سایت ── */
+  .container-app {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  /* فاصله استاندارد بخش‌های صفحه */
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  /* ── تایپوگرافی ── */
+  .heading-1 { @apply text-3xl font-black tracking-tight sm:text-4xl md:text-5xl; }
+  .heading-2 { @apply text-2xl font-extrabold tracking-tight sm:text-3xl; }
+  .heading-3 { @apply text-lg font-bold sm:text-xl; }
+  .text-lead { @apply text-base leading-8 text-muted sm:text-lg; }
+
+  /* متن گرادیانی: از رنگ اصلی به سمت رنگ متن — در هر دو تم خودکار هماهنگ */
+  .text-gradient {
+    background-image: linear-gradient(
+      to left,
+      var(--primary),
+      color-mix(in oklab, var(--primary) 45%, var(--foreground))
+    );
+    @apply bg-clip-text text-transparent;
+  }
+
+  /* ── دکمه‌ها ── */
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-2.5
+           text-sm font-bold transition-all duration-300 select-none
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-primary text-primary-foreground shadow-lg shadow-primary/25
+           hover:bg-primary/90 hover:shadow-primary/40;
+  }
+  .btn-secondary {
+    @apply border border-border bg-surface text-foreground hover:border-primary/50 hover:text-primary;
+  }
+  .btn-outline {
+    @apply border-2 border-primary/40 text-primary hover:bg-primary/10;
+  }
+  .btn-ghost {
+    @apply text-muted hover:bg-primary/10 hover:text-primary;
+  }
+  /* اندازه‌ها — بعد از واریانت‌ها تعریف می‌شوند تا پدینگ را override کنند */
+  .btn-sm { @apply rounded-lg px-3.5 py-1.5 text-xs; }
+  .btn-lg { @apply rounded-2xl px-7 py-3 text-base; }
+
+  /* ── کارت‌ها ── */
+  .card { @apply rounded-2xl border border-border bg-surface p-6; }
+  /* حالت تعاملی: بلند شدن ملایم هنگام هاور */
+  .card-hover {
+    @apply transition-all duration-300
+           hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10;
+  }
+
+  /* ── بج (برچسب کوچک) ── */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1
+           text-xs font-medium text-muted;
+  }
+
+  /* ── فرم‌ها ── */
+  .label { @apply mb-1.5 block text-sm font-medium; }
+  .input,
+  .textarea {
+    @apply w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm
+           transition-colors placeholder:text-muted
+           focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30;
+  }
+  .textarea { @apply min-h-28 resize-y leading-7; }
+}
