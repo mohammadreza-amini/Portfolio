@@ -139,7 +139,8 @@ onBeforeUnmount(() => {
               aria-label="بستن"
               @click="close"
             >
-              ×
+              <!-- glyph بزرگ‌تر (درخواست کاربر): text-xl + leading-none برای وسط‌چینی دقیق در grid -->
+              <span class="text-xl leading-none">×</span>
             </button>
           </header>
 
