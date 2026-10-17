@@ -28,6 +28,13 @@
   --primary: #2563EB;      /* رنگ برند/اکشن — آبی یکپارچه در هر دو تم (انتخاب کاربر) */
   --primary-foreground: #FFFFFF; /* متنی که روی رنگ اصلی می‌نشیند */
 
+  /* رنگ‌های عملکردی/وضعیت — جزو پالت برند نیستند ولی در هر دیزاین‌سیستم
+     استانداردند (موفق/هشدار/خطا)؛ به‌صورت توکن تعریف شدند تا در تم تیره
+     نسخه روشن‌ترشان (بهتر دیده شوند) خودکار جایگزین شود */
+  --success: #16A34A;
+  --warning: #D97706;
+  --danger:  #DC2626;
+
   /* متن خنثی: ۶۲٪ رنگ متن + ۳۸٪ پس‌زمینه */
   --muted: color-mix(in oklab, var(--foreground) 62%, var(--background));
   /* خطوط جداکننده: ۱۲٪ متن روی پس‌زمینه — ظریف و هماهنگ */
@@ -43,6 +50,11 @@
   --foreground: #F1F5F9;
   --primary: #3B82F6;
   --primary-foreground: #FFFFFF;
+
+  /* نسخه‌های روشن‌تر رنگ‌های وضعیت برای زمینه تیره */
+  --success: #4ADE80;
+  --warning: #FBBF24;
+  --danger:  #F87171;
 
   --muted: color-mix(in oklab, var(--foreground) 62%, var(--background));
   --border: color-mix(in oklab, var(--foreground) 12%, var(--background));
@@ -63,6 +75,9 @@
   --color-border: var(--border);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
 
   /* فونت پیش‌فرض سایت: وزیرمتن (کلاس font-sans و کل بدنه) */
   --font-sans: 'Vazirmatn Variable', 'Vazirmatn', Tahoma, sans-serif;
@@ -146,11 +161,17 @@
            hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10;
   }
 
-  /* ── بج (برچسب کوچک) ── */
+  /* ── بج (برچسب کوچک) ──
+     واریانت‌های رنگی: زمینه = ۱۰٪ رنگ وضعیت + متن = خود رنگ —
+     در هر دو تم خودکار هماهنگ (چون از توکن می‌خوانند) */
   .badge {
     @apply inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1
            text-xs font-medium text-muted;
   }
+  .badge-primary { @apply border-primary/20 bg-primary/10 text-primary; }
+  .badge-success { @apply border-success/20 bg-success/10 text-success; }
+  .badge-warning { @apply border-warning/20 bg-warning/10 text-warning; }
+  .badge-danger  { @apply border-danger/20 bg-danger/10 text-danger; }
 
   /* ── فرم‌ها ── */
   .label { @apply mb-1.5 block text-sm font-medium; }

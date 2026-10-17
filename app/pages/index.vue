@@ -1,127 +1,192 @@
 <script setup lang="ts">
 // ============================================================
-// pages/index.vue — صفحه نمایش دیزاین‌سیستم (مرحله ۲)
-// هدف: دیدن همه کلاس‌های آماده در یک نگاه
-// از مرحله ۵ با محتوای واقعی «صفحه خانه» جایگزین می‌شود.
+// pages/index.vue — صفحه نمایش کامپوننت‌های Base (مرحله ۳)
+// هدف: تست زنده هر ۶ کامپوننت Base در یک نگاه؛ هر بخش = یک
+// کامپوننت و حالت‌هایش. از مرحله ۵ با «صفحه خانه» واقعی
+// جایگزین می‌شود.
 // ------------------------------------------------------------
-// نکته: siteConfig از پوشه shared/data می‌آید — یک بار تعریف،
-// هر جا لازم است import می‌کنیم (منبع واحد حقیقت)
+// نکته: کامپوننت‌های Base بدون import استفاده شده‌اند —
+// auto-import خودکار Nuxt از پوشه app/components (با
+// pathPrefix:false در nuxt.config نام = نام فایل است)
 // ============================================================
-import { siteConfig } from '#shared/data/site'
+import { siteConfig, socialLinks } from '#shared/data/site'
 
-// متادیتای صفحه (در مرحله ۱۰ کامل‌تر می‌شود)
 useSeoMeta({
-  title: `${siteConfig.name} — دیزاین‌سیستم`,
-  description: 'نمایش کلاس‌های آماده پروژه',
+  title: `${siteConfig.name} — کامپوننت‌های پایه`,
+  description: 'نمایش زنده کامپوننت‌های UI پایه پروژه',
 })
 
-// دکمه‌های نمونه برای حلقه رندر
-const btnVariants = [
-  { cls: 'btn btn-primary', label: 'اصلی' },
-  { cls: 'btn btn-secondary', label: 'ثانویه' },
-  { cls: 'btn btn-outline', label: 'خطی' },
-  { cls: 'btn btn-ghost', label: 'شفاف' },
-  { cls: 'btn btn-primary', label: 'غیرفعال', disabled: true },
-]
-const btnSizes = [
-  { cls: 'btn btn-primary btn-sm', label: 'کوچک' },
-  { cls: 'btn btn-primary', label: 'متوسط' },
-  { cls: 'btn btn-primary btn-lg', label: 'بزرگ' },
-]
+/* ── وضعیت زنده فرم (دموی v-model) ── */
+const name = ref('')
+const email = ref('')
+const message = ref('')
+
+// خطای اعتبارسنجی شبیه‌سازی‌شده — تا حالت error به‌صورت زنده دیده شود
+const nameError = computed(() =>
+  name.value.trim().length > 0 && name.value.trim().length < 3
+    ? 'نام باید حداقل ۳ حرف باشد'
+    : '',
+)
+
+const sent = ref(false)
+function fakeSubmit() {
+  sent.value = true
+  setTimeout(() => (sent.value = false), 2000)
+}
+
+function clearForm() {
+  name.value = ''
+  email.value = ''
+  message.value = ''
+}
+
+/* ── وضعیت مودال ── */
+const showModal = ref(false)
+
+// برای دموی «لینک خارجی» — اولین شبکه اجتماعی از shared/data
+const firstSocial = socialLinks[0]
 </script>
 
 <template>
   <div class="container-app section space-y-16">
     <!-- ── سربرگ ── -->
     <header class="space-y-4 text-center">
-      <span class="badge mx-auto">مرحله ۲ — دیزاین‌سیستم</span>
+      <BaseBadge variant="primary">مرحله ۳ — کامپوننت‌های پایه</BaseBadge>
       <h1 class="heading-1">
-        کلاس‌های آماده <span class="text-gradient">{{ siteConfig.name }}</span>
+        کامپوننت‌های <span class="text-gradient">Base</span>
       </h1>
       <p class="text-lead mx-auto max-w-xl">
-        همه بخش‌های سایت از همین کلاس‌ها ساخته می‌شوند؛ یک‌بار تعریف، همه‌جا استفاده.
-        اگر یک کلاس را عوض کنیم، کل سایت هماهنگ به‌روز می‌شود.
+        شش بلوک سازنده پایه: Button، Modal، Card، Input، Textarea و Badge.
+        همه تم‌پذیر و دسترسی‌پذیر — استایل از دیزاین‌سیستم مرحله ۲ می‌آید.
       </p>
     </header>
 
-    <!-- ── دکمه‌ها ── -->
+    <!-- ── BaseButton ── -->
     <section class="card space-y-6">
       <div class="space-y-2">
-        <h2 class="heading-2">دکمه‌ها</h2>
-        <p class="text-sm text-muted">ترکیب‌پذیر: btn + واریانت + اندازه</p>
+        <h2 class="heading-2">BaseButton</h2>
+        <p class="text-sm text-muted">
+          هوشمند: بدون to دکمه است / to داخلی → NuxtLink / to خارجی → a با target=_blank
+        </p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <button
-          v-for="b in btnVariants"
-          :key="b.label"
-          :class="b.cls"
-          :disabled="b.disabled"
-        >
-          {{ b.label }}
-        </button>
+        <BaseButton>اصلی</BaseButton>
+        <BaseButton variant="secondary">ثانویه</BaseButton>
+        <BaseButton variant="outline">خطی</BaseButton>
+        <BaseButton variant="ghost">شفاف</BaseButton>
+        <BaseButton disabled>غیرفعال</BaseButton>
       </div>
       <div class="flex flex-wrap items-center gap-3 border-t border-border pt-6">
-        <button v-for="b in btnSizes" :key="b.label" :class="b.cls">{{ b.label }}</button>
+        <BaseButton size="sm">کوچک</BaseButton>
+        <BaseButton>متوسط</BaseButton>
+        <BaseButton size="lg">بزرگ</BaseButton>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 border-t border-border pt-6">
+        <BaseButton to="/" variant="outline">لینک داخلی (NuxtLink)</BaseButton>
+        <BaseButton :to="firstSocial?.href" variant="secondary">
+          لینک خارجی ({{ firstSocial?.label }})
+        </BaseButton>
       </div>
     </section>
 
-    <!-- ── تایپوگرافی ── -->
+    <!-- ── BaseBadge ── -->
     <section class="card space-y-5">
-      <h2 class="heading-2">تایپوگرافی</h2>
-      <p class="heading-1">تیتر یک — heading-1</p>
-      <p class="heading-2">تیتر دو — heading-2</p>
-      <p class="heading-3">تیتر سه — heading-3</p>
-      <p class="text-lead">
-        متن معرفی — text-lead: پاراگراف بزرگ و خوانا برای توضیح‌های اصلی صفحه.
-      </p>
-      <p>
-        متن معمولی بدنه با فونت وزیرمتن و <span class="text-gradient font-bold">متن گرادیانی</span>
-        که در هر دو تم خودکار هماهنگ است.
-      </p>
+      <h2 class="heading-2">BaseBadge</h2>
+      <div class="flex flex-wrap gap-2">
+        <BaseBadge>پیش‌فرض</BaseBadge>
+        <BaseBadge variant="primary">اصلی</BaseBadge>
+        <BaseBadge variant="success">موفق</BaseBadge>
+        <BaseBadge variant="warning">هشدار</BaseBadge>
+        <BaseBadge variant="danger">خطا</BaseBadge>
+      </div>
     </section>
 
-    <!-- ── کارت‌ها و بج‌ها ── -->
+    <!-- ── BaseCard ── -->
     <section class="space-y-6">
-      <h2 class="heading-2">کارت‌ها</h2>
+      <h2 class="heading-2">BaseCard</h2>
       <div class="grid gap-4 md:grid-cols-2">
-        <div class="card card-hover space-y-3">
-          <span class="badge">بج نمونه</span>
-          <h3 class="heading-3">کارت تعاملی</h3>
+        <BaseCard hover class="space-y-3">
+          <BaseBadge variant="primary">تعاملی</BaseBadge>
+          <h3 class="heading-3">کارت هاور‌دار</h3>
           <p class="text-sm leading-7 text-muted">
-            با کلاس card-hover هنگام هاور کمی بالا می‌آید و مرزش رنگ برند می‌گیرد.
+            با prop یعنی hover هنگام هاور کمی بالا می‌آید و مرزش رنگ برند می‌گیرد —
+            مناسب کارت پروژه‌ها و پست‌ها.
           </p>
-          <button class="btn btn-outline btn-sm">بیشتر بدانید</button>
-        </div>
-        <div class="card space-y-3">
+          <BaseButton size="sm" variant="outline">بیشتر بدانید</BaseButton>
+        </BaseCard>
+        <BaseCard class="space-y-3">
           <h3 class="heading-3">کارت ساده</h3>
           <p class="text-sm leading-7 text-muted">
-            بدون حالت تعاملی — مناسب محتوای استاتیک.
+            بدون حالت تعاملی — مناسب محتوای استاتیک مثل درباره من.
+            کلاس‌های اضافه والد خودکار merge می‌شوند.
           </p>
-        </div>
+        </BaseCard>
       </div>
     </section>
 
-    <!-- ── فرم‌ها ── -->
+    <!-- ── BaseInput / BaseTextarea ── -->
     <section class="card space-y-6">
-      <h2 class="heading-2">فرم‌ها</h2>
-      <div class="grid gap-5 md:grid-cols-2">
-        <div>
-          <label for="demo-name" class="label">نام</label>
-          <input id="demo-name" type="text" class="input" placeholder="مثلاً علی رضایی" />
-        </div>
-        <div>
-          <label for="demo-email" class="label">ایمیل</label>
-          <input id="demo-email" type="email" class="input" placeholder="you@example.com" dir="ltr" />
-        </div>
-        <div class="md:col-span-2">
-          <label for="demo-msg" class="label">پیام</label>
-          <textarea id="demo-msg" class="textarea" placeholder="متن پیام..." />
-        </div>
+      <div class="space-y-2">
+        <h2 class="heading-2">BaseInput / BaseTextarea</h2>
+        <p class="text-sm text-muted">
+          v-model کامل + اتصال label↔input + حالت خطای زنده — در «نام» تایپ کن تا خطای اعتبارسنجی را ببینی
+        </p>
       </div>
-      <div class="flex flex-wrap gap-3">
-        <button class="btn btn-primary">ارسال</button>
-        <button class="btn btn-secondary">پاک کردن</button>
+      <form class="grid gap-5 md:grid-cols-2" @submit.prevent="fakeSubmit">
+        <BaseInput
+          v-model="name"
+          label="نام"
+          placeholder="مثلاً علی رضایی"
+          hint="این فیلد خطای زیر ۳ حرف را زنده نشان می‌دهد"
+          :error="nameError"
+        />
+        <BaseInput
+          v-model="email"
+          type="email"
+          ltr
+          label="ایمیل"
+          placeholder="you@example.com"
+        />
+        <BaseTextarea
+          v-model="message"
+          label="پیام"
+          class="md:col-span-2"
+          placeholder="متن پیام تو..."
+        />
+        <div class="flex flex-wrap items-center gap-3 md:col-span-2">
+          <BaseButton type="submit">{{ sent ? 'پیام دریافت شد' : 'ارسال' }}</BaseButton>
+          <BaseButton type="button" variant="secondary" @click="clearForm">پاک کردن</BaseButton>
+          <span v-if="name || email || message" class="text-xs text-muted">
+            وضعیت زنده → نام: «{{ name }}» · ایمیل: «{{ email }}»
+          </span>
+        </div>
+      </form>
+    </section>
+
+    <!-- ── BaseModal ── -->
+    <section class="card space-y-6">
+      <div class="space-y-2">
+        <h2 class="heading-2">BaseModal</h2>
+        <p class="text-sm text-muted">
+          Teleport به body + بستن با Escape/کلیک بیرون + تله فوکوس + قفل اسکرول پشت مودال
+        </p>
       </div>
+      <BaseButton variant="outline" @click="showModal = true">باز کردن مودال</BaseButton>
+
+      <BaseModal v-model="showModal" title="مودال نمونه" size="md">
+        <p>
+          محتوای این بخش به انتهای body تلپورت می‌شود؛ پس از هر overflow یا
+          z-index والدین فرار می‌کند و همیشه شناور است.
+        </p>
+        <p class="mt-3">
+          با Escape یا کلیک روی پس‌زمینه بسته می‌شود و با Tab، فوکوس داخل
+          مودال حلقه می‌زند — هرگز به زیر مودال نمی‌رسد.
+        </p>
+        <template #footer>
+          <BaseButton size="sm" @click="showModal = false">تایید</BaseButton>
+          <BaseButton size="sm" variant="ghost" @click="showModal = false">انصراف</BaseButton>
+        </template>
+      </BaseModal>
     </section>
   </div>
 </template>

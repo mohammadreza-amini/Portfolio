@@ -150,3 +150,46 @@ Stage Summary:
 - کلاس‌های دیزاین‌سیستم: ترکیب‌پذیر (btn btn-primary btn-lg) و تم‌پذیر (همه با توکن‌ها)
 - مرحله بعد (۳): کامپوننت‌های Base در components/ui — BaseButton (با props واریانت/اندازه)، BaseModal (teleport + focus trap)، BaseCard، BaseInput/BaseTextarea، BaseBadge — نیازمند تایید کاربر
 - برای ایجنت بعدی: هر پیام جدید ممکن است pnpm گلوبال را پاک کرده باشد؛ چک و در صورت نیاز `npm i -g pnpm@latest`
+
+---
+Task ID: stage-3
+Agent: Super Z (main agent)
+Task: کامپوننت‌های Base در components/ui + صفحه نمایش زنده
+
+Work Log:
+- نکته همکاری: قرارداد جدید کاربر — او zip دانلود + extract + install (در صورت نیاز) + pnpm dev + کامیت/پوش با متن من انجام می‌دهد؛ متن کامیت هر مرحله در پیام پایانی اعلام شود؛ zip نباید bun.lock داشته باشد
+- make_snapshot.py: بلاک‌کردن لاک‌فایل‌های بیگانه (bun.lock/yarn.lock/package-lock.json و...) — bun.lockی که رانر سندباکس ساخته بود از zip حذف شد و zip مرحله ۲ از نو ساخته شد
+- شبیه‌سازی کامل مسیر کاربر با zip خالص: extract → pnpm install → verify → موفق (نصب تمیز ۴.۴ ثانیه، SSR 200)
+- nuxt.config.ts: components=[{path:'~/components', pathPrefix:false}] — نام فایل = نام کامپوننت (<BaseButton> نه <UiBaseButton>)؛ قانون نام‌گذاری: Base* برای UI، App* برای layout
+- main.css: توکن‌های عملکردی وضعیت (success/warning/danger) برای تم روشن/تیره + نگاشت @theme + واریانت‌های badge-primary/success/warning/danger (زمینه ۱۰٪ + متن خود رنگ)
+- ۶ کامپوننت با کامنت فارسی کامل:
+  * BaseButton: رندر سه‌حالته (button/NuxtLink/a external با rel noopener)، واریانت/اندازه/block/disabled، حالت disabled لینک با aria-disabled
+  * BaseModal: defineModel، Teleport به body، Transition scoped، Escape+کلیک backdrop، focus trap (حلقه Tab داخل پنل)، scroll lock، بازگرداندن فوکوس به تریگر، useId برای aria-labelledby، cleanup در unmount
+  * BaseCard: as (تگ دلخواه) + hover → card-hover
+  * BaseInput/BaseTextarea: defineModel، useId برای label[for]، aria-invalid + role=alert + aria-describedby، واریانت aria-invalid:border-danger، prop ltr برای محتوای لاتین
+  * BaseBadge: ۵ واریانت به کلاس‌های دیزاین‌سیستم
+- pages/index.vue بازنویسی شد: نمایش زنده همه ۶ کامپوننت + دموی v-model/خطای زنده/مودال/لینک خارجی
+- باگ حین تست: siteConfig.socialLinks اشتباه بود (socialLinks export جداگانه است) → اصلاح شد
+- تست‌ها: HTTP 200 + «کامپوننت‌های» + badge-primary در CSS + github.com در SSR (لینک خارجی) + aria-invalid در CSS ✅
+- کامیت 22e0c20 + اسنپ‌شات download/portfolio-stage3-base-components.zip (27 فایل)
+- ui/.gitkeep حذف شد (پوشه پر شد)
+
+Stage Summary:
+- بلوک‌های سازنده UI کامل: همه تم‌پذیر، a11y، بدون وابستگی خارجی جدید (صفر پکیج جدید در این مرحله)
+- مرحله بعد (۴): Header/AppHeader + AppFooter + ThemeToggle + MobileMenu در components/layout با الگوی فوتر چسبان layouts/default.vue — نیازمند تایید کاربر
+
+---
+Task ID: stage-3b
+Agent: Super Z (main agent)
+Task: بررسی و اعمال .gitignore پیشنهادی کاربر
+
+Work Log:
+- کاربر لیست .gitignore خودش را فرستاد (node_modules/.nuxt/.output/dist/.env/.env.*/!.env.example)
+- مقایسه: هر ۷ مورد از مرحله ۰ از قبل در .gitignore پروژه بود — هیچ فایل اضافه‌ای خطر پوش نداشت
+- فایل با کامنت فارسی مرتب شد + مکمل‌ها: npm-shrinkwrap.json/deno.lock/bun.lockb (لاک‌فایل‌های بیگانه)، Thumbs.db (ویندوز)، اسلش انتهایی پوشه‌ها
+- چک ایمنی: git ls-files -i -c --exclude-standard خالی — هیچ فایل tracked ای ignore نشد ✅
+- کامیت + رکورد؛ zip جداگانه لازم نیست (با zip مرحله ۴ می‌آید؛ .gitignore محلی کاربر سازگار است)
+
+Stage Summary:
+- .gitignore نهایی: وابستگی‌ها + build + env (با استثنای example) + لاک‌فایل‌های بیگانه + لاگ + سیستمی/ادیتور + پوشه‌های سندباکس
+- نکته برای ایجنت بعدی: اگر کاربر خواست تنظیمات .vscode اشتراکی داشته باشد، لازم است استثنا !.vscode/ اضافه شود

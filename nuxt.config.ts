@@ -25,6 +25,15 @@ export default defineNuxtConfig({
     classSuffix: '',
   },
 
+  // ── نام‌گذاری کامپوننت‌ها ──
+  // رفتار پیش‌فرض Nuxt مسیر پوشه را هم در اسم می‌گذارد:
+  //   components/ui/BaseButton.vue → <UiBaseButton/>
+  // با pathPrefix:false نام فایل، نام کامپوننت است → <BaseButton/>
+  // قانون نام‌گذاری پروژه: Base* برای UI پایه، App* برای layout (مرحله ۴)
+  components: [
+    { path: '~/components', pathPrefix: false },
+  ],
+
   // ── CSSهای سراسری (ترتیب مهم است) ──
   css: [
     // ۱) وزیرمتن متغیر، self-host از npm:
